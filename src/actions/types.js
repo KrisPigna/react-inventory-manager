@@ -1,0 +1,3 @@
+export const FETCH_INVENTORY = 'FETCH_INVENTORY';
+export const NEW_PRODUCT = 'NEW_PRODUCT';
+export const SET_PRODUCT = 'SET_PRODUCT';

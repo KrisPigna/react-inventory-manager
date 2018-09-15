@@ -1,0 +1,21 @@
+@import '../App.scss';
+
+.product-form {
+    padding: 10px;
+    background-color: color(accent);
+}
+
+.create-form {
+    display: block;
+    max-width: 600px;
+}
+
+input {
+    height: 2em;
+    border-radius: 2px;
+    border: 1px outset black;
+}
+
+#alert {
+    font-size: 18px;
+}

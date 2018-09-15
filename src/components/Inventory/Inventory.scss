@@ -1,0 +1,30 @@
+@import '../App.scss';
+
+.table-container {
+    padding: 1em;
+    display: inline-block;
+    max-width: 950px;
+    
+
+    #title, #body {
+        width: 400px;
+        max-width: 400px;
+    }
+
+    #check, #id, #edit {
+        width: 50px;
+    }
+}
+
+.menu-container {
+    padding: 1em;
+    display: inline-block;
+    width: 100%;
+}
+
+.page-menu {
+    display: block;
+    margin-left: 1em;
+    margin-bottom: 1em;
+    margin-right: 1em;
+}

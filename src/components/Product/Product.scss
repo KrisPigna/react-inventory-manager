@@ -1,0 +1,28 @@
+@import '../App.scss';
+
+.product-page {
+    font-size: 18px;
+    padding: 1em;
+}
+
+.product {
+    font-size: 24px;
+    padding: 1em;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 1px;
+    width: 100%;
+    max-width: 600px;
+    
+    div {
+        border: 1px solid grey;
+    }
+
+    div:nth-child(odd) {
+        background-color: color(accent);
+    }
+
+    textarea {
+        width: 100%;
+    }
+}

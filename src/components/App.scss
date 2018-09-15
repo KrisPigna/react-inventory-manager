@@ -1,0 +1,13 @@
+$colors: (
+    primary: rgb(72, 87, 177),
+    accent: rgb(152, 205, 209),
+    table: rgb(240, 240, 240)
+);
+
+@function color($color-name) {
+    @return map-get($colors, $color-name);
+}
+
+div {
+    font-family: Arial, Helvetica, sans-serif;
+}
