@@ -23,17 +23,14 @@ export const setProduct = (product) => dispatch => {
     });
 };
 
-export const createProduct = (productData) => dispatch => {
-    fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(productData)
-    })
-        .then(res => res.json())
-        .then(product => dispatch({
-            type: NEW_PRODUCT,
-            payload: product
-        }));
+export const createProduct = (inventory, product) => dispatch => {
+    inventory.push(product);
+    var size = 10; var pages = [];
+    for (var i = 0; i < inventory.length; i += size) {
+        pages.push(inventory.slice(i, i + size));
+    }
+    dispatch({
+        type: NEW_PRODUCT,
+        payload: { inventory, pages }
+    });
 };

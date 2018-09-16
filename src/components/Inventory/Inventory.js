@@ -6,10 +6,9 @@ import { fetchInventory, setProduct } from '../../actions/inventoryActions';
 import './Inventory.scss';
 
 // React Bootstrap components
-import Button from 'react-bootstrap/lib/Button';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Table from 'react-bootstrap/lib/Table';
-import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
+import Pagination from 'react-bootstrap/lib/Pagination';
 import NavDropdown from 'react-bootstrap/lib/NavDropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Navbar from 'react-bootstrap/lib/Navbar';
@@ -26,6 +25,7 @@ class Inventory extends Component {
 
         this.state = {
             page: [],
+            currentPage: 1,
             searchTerm: "",
             searchParam: "title",
             showBody: []
@@ -42,6 +42,8 @@ class Inventory extends Component {
         this.deleteProduct = this.deleteProduct.bind(this);
         this.editProduct = this.editProduct.bind(this);
         this.expandBody = this.expandBody.bind(this);
+        this.generatePageMenu = this.generatePageMenu.bind(this);
+        this.generateInventoryTable = this.generateInventoryTable.bind(this);
 
         // Populates inventory on first loading
         if (this.props.inventory.length === 0) {
@@ -50,7 +52,7 @@ class Inventory extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.pages !== nextProps.pages) {
+        if (this.props.pages !== nextProps.pages || this.props.inventory !== nextProps.inventory) {
             this.props.setProduct({ userId: 0, id: 0, title: "placeholder", body: "placeholder" });
             this.setState({ page: nextProps.pages[0] });
             for (var i = 1; i <= nextProps.inventory.length; i++) {
@@ -89,7 +91,7 @@ class Inventory extends Component {
 
     // Sets table contents to the user's selected page
     getPage(e) {
-        this.setState({ page: this.props.pages[e.target.innerHTML - 1] });
+        this.setState({ page: this.props.pages[e.target.innerHTML - 1], currentPage: parseInt(e.target.innerHTML) });
     }
 
     // Sets the number of rows to display in a page (default is 10 upon component first loading)
@@ -189,7 +191,7 @@ class Inventory extends Component {
 
     // Selects/deselects all checkmarks on a page
     allChecks(e) {
-        var checkboxes = document.getElementsByTagName("input");
+        let checkboxes = document.getElementsByTagName("input");
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].type == "checkbox") {
                 if (e.target.checked == true && e.target != checkboxes[i]) {
@@ -202,11 +204,76 @@ class Inventory extends Component {
         }
     }
 
-    render() {
-        // Set up for inventory table and page menu mapping
+    // Handles display for pagination menu, depending on size
+    generatePageMenu() {
+        let pageMenu = [];
+
+        // Menu when there are fewer than 6 pages
+        if (this.props.pages.length < 6) {
+            for (var i = 1; i <= this.props.pages.length; i++) {
+                pageMenu.push(
+                    <Pagination.Item key={i} onClick={this.getPage}>{i}</Pagination.Item>
+                );
+            }
+        }
+
+        // Menu when there are more than six pages, and current page is among the first three
+        else if (this.state.currentPage < 4) {
+            for (var i = 1; i <= 7; i++) {
+                pageMenu.push(
+                    <Pagination.Item key={i} onClick={this.getPage}>{i}</Pagination.Item>
+                );
+            }
+            pageMenu.push(
+                <Pagination.Ellipsis />
+            );
+           
+            pageMenu.push(
+                <Pagination.Item key={this.props.pages.length} onClick={this.getPage}>{this.props.pages.length}</Pagination.Item>
+            );
+        }
+
+        // Menue when there are more than 6 pages, and current page is somewhere in the middle
+        else if (this.state.currentPage >= 4 && this.state.currentPage < this.props.pages.length - 3) {
+            pageMenu.push(
+                <Pagination.Item key={1} onClick={this.getPage}>1</Pagination.Item>
+            );
+            pageMenu.push(
+                <Pagination.Ellipsis />
+            );
+            for (var i = -2; i <= 2; i++) {
+                pageMenu.push(
+                    <Pagination.Item key={this.state.currentPage + i} onClick={this.getPage}>{this.state.currentPage + i}</Pagination.Item>
+                );
+            }
+            pageMenu.push(
+                <Pagination.Ellipsis />
+            );
+            pageMenu.push(
+                <Pagination.Item key={this.props.pages.length} onClick={this.getPage}>{this.props.pages.length}</Pagination.Item>
+            );
+        }
+
+        // Menu when there are more than 6 pages, and current page is amont the last three
+        else if (this.state.currentPage >= this.props.pages.length - 3) {
+            pageMenu.push(
+                <Pagination.Item key={1} onClick={this.getPage}>1</Pagination.Item>
+            );
+            pageMenu.push(
+                <Pagination.Ellipsis />
+            );
+            for (var i = this.props.pages.length - 6; i <= this.props.pages.length; i++) {
+                pageMenu.push(
+                    <Pagination.Item key={i} onClick={this.getPage}>{i}</Pagination.Item>
+                );
+            }
+        }
+        return pageMenu;
+    }
+
+    // Handles setting up inventory table presentation
+    generateInventoryTable() {
         var inventory;
-        var pageNumber = [];
-        var pageMenu;
         if (this.state.page != undefined) {
             inventory = this.state.page.map(product => (
                 <tr key={product.id}>
@@ -227,13 +294,14 @@ class Inventory extends Component {
                     </th>
                 </tr>
             ));
-            for (var i = 1; i <= this.props.pages.length; i++) {
-                pageNumber.push(i);
-            }
-            pageMenu = pageNumber.map(page => (
-                <Button key={page} onClick={this.getPage}>{page}</Button>
-            ));
         }
+        return inventory;
+    }
+
+    render() {
+        // Set up for inventory table and page menu presentation
+        let inventory = this.generateInventoryTable();
+        let pageMenu = this.generatePageMenu();
 
         return (
             <div>
@@ -284,9 +352,9 @@ class Inventory extends Component {
 
                 {/* Pagination menu */}
                 <div className="page-menu">
-                    <ButtonGroup>
+                    <Pagination bsSize="small">
                         {pageMenu}
-                    </ButtonGroup>
+                    </Pagination>
                 </div>
 
                 {/* Inventory table */}

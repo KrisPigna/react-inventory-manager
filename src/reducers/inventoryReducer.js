@@ -7,7 +7,7 @@ const initialState = {
     page: []
 }
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
     switch (action.type) {
         case FETCH_INVENTORY:
             return {
@@ -24,7 +24,9 @@ export default function(state = initialState, action) {
         case NEW_PRODUCT:
             return {
                 ...state,
-                product: action.payload
+                products: action.payload.inventory,
+                pages: action.payload.pages,
+                page: action.payload.pages[0]
             };
         default:
             return state;

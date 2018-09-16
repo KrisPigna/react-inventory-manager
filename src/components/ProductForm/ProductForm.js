@@ -35,8 +35,7 @@ class ProductForm extends Component {
                 body: this.state.description,
                 id: this.props.inventory[this.props.inventory.length-1].id + 1
             };
-
-            this.props.inventory.push(product);
+            this.props.createProduct(this.props.inventory, product);
             this.setState({ open: false, alert: true });
         }
     }
